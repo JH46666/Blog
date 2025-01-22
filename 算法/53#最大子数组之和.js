@@ -1,17 +1,27 @@
+// Kadane 算法是解决最大子数组和的标准方法，核心是：
+// - 用一个变量 currSum 记录以当前元素结尾的最大子数组和。
+// - 如果 currSum 变成负数，则抛弃之前的子数组，从当前元素重新开始（因为负数只会拖累和）。
+// - 用 maxSum 记录遍历过程中遇到的全局最大和。
 /**
  * @param {number[]} nums
  * @return {number}
  */
-var maxSubArray = function (nums) {
-  sum = nums[0];
-  n = nums[0];
+function maxSubArray(nums) {
+  let currSum = nums[0]; // 当前子数组和
+  let maxSum = nums[0]; // 全局最大和
+
   for (let i = 1; i < nums.length; i++) {
-    if (n > 0) n += nums[i];
-    else n = nums[i];
-    if (sum < n) sum = n;
+    // 选择：要么加入当前元素，要么从当前元素重新开始
+    currSum = Math.max(nums[i], currSum + nums[i]);
+    // 更新全局最大和
+    maxSum = Math.max(maxSum, currSum);
   }
-  return sum;
-};
+
+  return maxSum;
+}
+
+// 测试
+console.log(maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4])); // 输出 6
 
 var n = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
 var val = maxSubArray(n);
@@ -27,7 +37,30 @@ var maxSubArray = function (nums) {
   return maxAns;
 };
 
-// 这道题难度不该是easy 这道题的一开始我想到的是暴力的滑窗去做，复杂度O(n^2)，显然达不到题目中要求的复杂度 这道题根据题目关键词，“最大”“连续”，可以判断是一道动态规划，附上这道题目的wiki链接https://zh.wikipedia.org/wiki/%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E5%88%97%E9%97%AE%E9%A2%98 方法如下：
+// ------------------------------
 
-// 定义一个函数f(n)，以第n个数为结束点的子数列的最大和，存在一个递推关系f(n) = max(f(n-1) + A[n], A[n]);
-// 将这些最大和保存下来后，取最大的那个就是，最大子数组和。因为最大连续子数组 等价于 最大的以n个数为结束点的子数列和 附代码
+function maxSubArrayWithIndex(nums) {
+  let currSum = nums[0],
+    maxSum = nums[0];
+  let start = 0,
+    end = 0,
+    tempStart = 0;
+
+  for (let i = 1; i < nums.length; i++) {
+    if (nums[i] > currSum + nums[i]) {
+      currSum = nums[i];
+      tempStart = i;
+    } else {
+      currSum += nums[i];
+    }
+    if (currSum > maxSum) {
+      maxSum = currSum;
+      start = tempStart;
+      end = i;
+    }
+  }
+  return { maxSum, subArray: nums.slice(start, end + 1) };
+}
+
+console.log(maxSubArrayWithIndex([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
+// 输出: { maxSum: 6, subArray: [4, -1, 2, 1] }

@@ -1,21 +1,22 @@
-# 错误监控
+# 错误监控&错误捕获
 
 可能会发生的错误有很多类型，每种错误都有对应的错误类型，而当错误发生的时候，就会抛出响应的错误对象。ECMA-262 中定义了下列 7 种错误类型：
 
 在 js 执行期间
-Error 错误的基类，其他错误都继承自该类型
-RangError 数组越界
-EvalError: Eval 函数执行异常
-ReferenceError 尝试引用一个未被定义的变量时，将会抛出此异常
-SyntaxError 语法解析不合理
-TypeError 类型错误，用来表示值的类型非预期类型时发生的错误
-URLError 以一种错误的方式使用全局 URL 处理函数而产生的错误
+
+1. Error 错误的基类，其他错误都继承自该类型
+2. RangError 数组越界
+3. EvalError: Eval 函数执行异常
+4. ReferenceError 尝试引用一个未被定义的变量时，将会抛出此异常
+5. SyntaxError 语法解析不合理
+6. TypeError 类型错误，用来表示值的类型非预期类型时发生的错误
+7. URLError 以一种错误的方式使用全局 URL 处理函数而产生的错误
 
 ## 异常处理
 
 JavaScript 引擎首先会读取代码，然后运行它。在读取阶段发生的错误被称为“解析时间（parse-time）”错误，并且无法恢复（从该代码内部）。这是因为引擎无法理解该代码。
 
-所以，try..catch 只能处理有效代码中出现的错误。这类错误被称为“运行时的错误（runtime errors）”，有时被称为“异常（exceptions）”。
+所以，try..catch 只能处理同步代码中出现的错误。这类错误被称为“运行时的错误（runtime errors）”，有时被称为“异常（exceptions）”。
 
 ```js
 try {
@@ -37,6 +38,20 @@ window.onerror = function (msg, url, row, col, error) {
 ```
 
 同步错误可以捕获到，但是，请注意 window.onerror 无法捕获静态资源异常和 JS 代码错误。
+
+## try catch 不能捕获到 promise.resolve()的报错
+
+try...catch 只能捕获同步代码中的异常。对于异步操作，错误是在异步任务执行时抛出的，而 try...catch 已经执行完毕，无法捕获这些错误。
+
+```js
+try {
+  new Promise((resolve, reject) => {
+    throw new Error("Error inside Promise");
+  });
+} catch (e) {
+  console.error("Caught:", e);
+}
+```
 
 ## 静态资源加载异常
 
@@ -84,8 +99,7 @@ new Promise((resolve, reject) => {
 Promise.reject("第二个错误");
 ```
 
-Fundebug 的操作
-记录错误
+## 错误的传递
 
 1. 用户 xpath 用户操作栈
 2. 服务端 xpath mp4=> gif

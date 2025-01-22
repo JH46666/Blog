@@ -29,26 +29,33 @@ var longestPalindrome_bf = function (s, res = s[0]) {
 // 复杂度太高了
 longestPalindrome_bf("babad");
 
-// var longestPalindrome_bf = function(s) {
-//   if (!s) return '';
-//   var longest = s[0];
+// var longestPalindrome_bf = function (s) {
+//   if (!s) return "";
+//   var maxLength = 1;
+//   var start = 0;
 //   var expandAroundCenter = function (left, right) {
 //     while (left >= 0 && right < s.length && s[left] === s[right]) {
 //       left--;
 //       right++;
 //     }
-//     return s.slice(left + 1, right);
-//   }
+//     return [right - left - 1, left + 1];
+//   };
 //   for (var i = 0; i < s.length; i++) {
-//     // 奇数
-//     var odd = expandAroundCenter(i, i);
-//     if (odd.length > longest.length) longest = odd;
-//     // 偶数
-//     var even = expandAroundCenter(i, i + 1);
-//     if (longest.length < even.length) longest = even;
+//     // 奇数长度回文
+//     let [len1, start1] = expandAroundCenter(i, i);
+//     // 偶数长度回文
+//     let [len2, start2] = expandAroundCenter(i, i + 1);
+//     if (len1 > maxLength) {
+//       maxLength = len1;
+//       start = start1;
+//     }
+//     if (len2 > maxLength) {
+//       maxLenth = len2;
+//       start = start2;
+//     }
 //   }
-//   return longest;
-// }
+//   return s.substring(start, start + maxLength);
+// };
 
 // 中心扩散算法
 /**

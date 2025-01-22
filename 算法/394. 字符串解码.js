@@ -1,49 +1,41 @@
-
-
-394. 字符串解码
 /**
  * @param {string} s
  * @return {string}
  */
-<!-- var decodeString = function(n) {
-  // 生成个栈
-  var numStack = [];
-  // 我觉得这个就是提取【】前面的数字 在进行处理
-  for(let i =0; i < n.length; i++){
-    stack.push(n[i])
-    if(n[i]==='[' || n[i]=== ']'){
-      decodeString()
-    }
-  }
+var decodeString = function (s) {
+  const repeatStack = []; // 保存重复次数的栈
+  const strStack = []; // 保存字符串的栈
+  let repeatCount = 0; // 当前重复次数
+  let currentStr = ""; // 当前字符串
 
+  for (let i = 0; i < s.length; i++) {
+    const char = s.charAt(i);
 
-
-};
-decodeString(); -->
-
-
-var decodeString = function(n) {
-  // 生成个栈
-  var numStack = [];
-  var strStack = [];
-  var num = 0;
-  let result = '';
-  for(const char of s){
-    if(!isNaN(char)){
-      num = num *10 + Number(char)
-    } else if(char === '['){
-      strStack.push(result); // result串入栈
-      result = '';           // 入栈后清零
-      num =0;
-    } else if(char === ']'){
-      let repeatTimes = numStack.pop(); //获取拷贝次数
-      result = strStack.pop() + result.repeat(repeatTimes); //构建字串
+    if (char === "]") {
+      // 取出重复次数
+      let count = repeatStack.pop();
+      // 生成重复字符串
+      let temp = "";
+      for (let j = 0; j < count; j++) {
+        temp += currentStr;
+      }
+      // 和前面的字符串拼接
+      currentStr = strStack.pop() + temp;
+    } else if (char === "[") {
+      // 将当前状态压入栈中
+      repeatStack.push(repeatCount);
+      strStack.push(currentStr);
+      // 重置状态
+      repeatCount = 0;
+      currentStr = "";
+    } else if (char >= "0" && char <= "9") {
+      // 计算重复次数
+      repeatCount = repeatCount * 10 + Number(char);
     } else {
-      result += char;
+      // 累积字符
+      currentStr += char;
     }
   }
 
-  return result
-
+  return currentStr; // 返回最终结果
 };
-decodeString();

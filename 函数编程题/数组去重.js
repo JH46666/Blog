@@ -6,9 +6,11 @@ function unoArr(arr) {
       arr1.push(arr[i]);
     }
   }
+  return arr1;
 }
 
 // 方式二  new Set
 function dosArr(arr) {
   const arr1 = [...new Set(arr)];
+  return arr1;
 }

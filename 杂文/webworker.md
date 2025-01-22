@@ -1,3 +1,5 @@
+## webworker
+
 Worker 的本质是在本地开启一个系统级的新线程来处理任务，具有以下特点:
 
 上下文: 具有独立的 worker 执行上下文，也就是 WorkerGlobalScope，在 worker 内通过 self 来获取引用它的对象

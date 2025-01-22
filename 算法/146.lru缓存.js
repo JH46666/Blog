@@ -9,28 +9,42 @@
 // 1、一个节点包含key、value、pre和next；
 // 2、定义两个哨兵节点-头结点、尾节点；
 // 3、使用map保存所以的节点；
-
+// 4、get方法：如果map中存在key，将节点移动到头部；
+// 5、put方法：如果map中存在key，更新value并移动到头部；如果不存在，创建新节点并添加到头部，如果容量超出，删除尾节点；
+// 6、删除节点：将节点的前一个节点的next指向节点的下一个节点，节点的下一个节点的pre指向节点的前一个节点；
 /**
  * @param {number} capacity
  */
 var LRUCache = function (capacity) {
   this.capacity = capacity;
+  this.map = new Map();
   this.head = {};
   this.tail = {};
   this.head.next = this.tail;
   this.tail.pre = this.head;
-  this.size = 0;
-  this.map = new Map();
 };
-
+LRUCache.prototype.moveToHead = function (node) {
+  this.deleteNode(node); // 先从链表中移除
+  this.addToHead(node); // 再添加头部
+};
+LRUCache.prototype.deleteNode = function (node) {
+  node.pre.next = node.next;
+  node.next.pre = node.pre;
+};
+LRUCache.prototype.addToHead = function (node) {
+  node.next = this.head.next;
+  node.pre = this.head;
+  this.head.next.pre = node;
+  this.head.next = node;
+};
 /**
  * @param {number} key
  * @return {number}
  */
 LRUCache.prototype.get = function (key) {
   if (this.map.has(key)) {
-    let node = this.map.get(key);
-    this.moveToHead(key, node.value);
+    const node = this.map.get(key);
+    this.moveToHead(node);
     return node.value;
   }
   return -1;
@@ -43,48 +57,22 @@ LRUCache.prototype.get = function (key) {
  */
 LRUCache.prototype.put = function (key, value) {
   if (this.map.has(key)) {
-    this.moveToHead(key, value);
-  } else {
-    if (this.size < this.capacity) {
-      this.addHead(key, value);
-    } else {
-      this.deleteTail();
-      this.addHead(key, value);
-    }
+    // 更新
+    const node = this.map.get(key);
+    node.value = value;
+    this.moveToHead(node);
+    return;
   }
-};
-
-LRUCache.prototype.deleteNode = function (key) {
-  let node = this.map.get(key);
-  let preNode = node.pre;
-  let nextNode = node.next;
-  preNode.next = nextNode;
-  nextNode.pre = preNode;
-  this.size--;
-  this.map.delete(key);
-};
-
-LRUCache.prototype.deleteTail = function () {
-  let tailPre = this.tail.pre;
-  tailPre.pre.next = this.tail;
-  this.tail.pre = tailPre.pre;
-  this.size--;
-  this.map.delete(tailPre.key);
-};
-
-LRUCache.prototype.addHead = function (key, value) {
-  let newNode = { key: key, value: value };
-  newNode.next = this.head.next;
-  this.head.next.pre = newNode;
-  this.head.next = newNode;
-  newNode.pre = this.head;
+  // 如果 key 不存在，创建新节点并添加到链表头部
+  const newNode = { key, value };
   this.map.set(key, newNode);
-  this.size++;
-};
+  this.addToHead(newNode);
 
-LRUCache.prototype.moveToHead = function (key, value) {
-  this.deleteNode(key);
-  this.addHead(key, value);
+  if (this.map.size > this.capacity) {
+    const lastNode = this.tail.pre;
+    this.deleteNode(lastNode);
+    this.map.delete(lastNode.key);
+  }
 };
 
 /**

@@ -199,80 +199,11 @@ window.requestIdleCallback = function(callback) {
 
 ```
 
-```js
-聊聊 requestIdleCallback 接口
-解题：
-● 初阶：
-  ○ 是什么：用于在浏览器空闲时间执行回调代码的接口
-  ○ 怎么做：
-function work(deadline) {
-  console.log(`当前帧剩余时间: ${deadline.timeRemaining()}`);
-  if (deadline.timeRemaining() > 1 || deadline.didTimeout) {
-     // 走到这里，说明时间有余，我们就可以在这里写自己的代码逻辑
-  }
-  // 走到这里，说明时间不够了，就让出控制权给主线程，下次空闲时继续调用
-  requestIdleCallback(work);
-}
-requestIdleCallback(work, { timeout: 1000 });
-    ■ 注册回调
-    ■ 回调中关注 deadline.timeRemaining，尽可能保证回调执行时间小于这个 dl
-  ○ 为什么：可以让我们在不妨碍页面响应的情况下，执行一些代码操作
-  ○ 应用场景：例如 react concurrent 模式就强依赖于该 api 实现时间分片调度
-● 中阶：
-  ○ 如何计算空闲时间
-    ■ 浏览器一帧的事件为 16ms
-    ■ 浏览器一帧中需要做很多事情：
-
-      ● input 事件处理
-      ● js 定时器、宏/微任务等
-      ● resize、scroll 等事件处理
-      ● rAF 回调
-      ● 布局
-      ● 绘制
-    ■ 假如在 16ms 内完成上述事项，还有剩余时间，则进入 idle 状态，调用 ric
-
-    ■ 第二种情况：长时间没有操作时
-
-      ● 理论上到下一次动作之前都属于 idle 时间，但浏览器会将 deadline 设定为 50ms，以免过长的任务影响响应速度
-      ● 所以，deadline < 50ms
-  ○ 适用场景：适合做一些低优的、可拆分的任务
-    ■ 数据上报
-    ■ 数据同步、分析等
-    ■ 检测卡顿
-    ■ react 的 scheduler 调度器
-    ■ qiankun 源码中的预加载
-  ○ 问题：
-    ■ 尽量避免在 rIC 中调用 dom 接口
-      ● dom 操作可能导致重排重绘，时间不可控，可能会超出 deadline 定义的时间长度，因此不应该在 rIC 操作，可使用 rAF 代替
-    ■ 避免使用 promise
-      ● promise 优先级很高，会在 idle 后立即执行，可能影响下一帧时间
-    ■ 兼容性差，至今依然处于实验阶段
-      ● 使用 setTimeout 代替
-window.requestIdleCallback =
-    window.requestIdleCallback ||
-    function (cb) {
-    var start = Date.now();
-    return setTimeout(function () {
-        cb({
-        didTimeout: false,
-        timeRemaining: function () {
-            return Math.max(0, 50 - (Date.now() - start));
-        }
-        });
-    }, 1);
-    }
-
-window.cancelIdleCallback =
-    window.cancelIdleCallback ||
-    function (id) {
-    	clearTimeout(id);
-    }
-      ● 但很显然这种行为与 rIC 的逻辑差异很大：rIC 是指没有任务可做的时候；setTimeout 是指尽快执行
+● 但很显然这种行为与 rIC 的逻辑差异很大：rIC 是指没有任务可做的时候；setTimeout 是指尽快执行
 ● 高阶：我们已经有 setTimeout、rAF 等时间相关的接口，为什么还需要设计 rIC？
-  ○ setTimeout 的逻辑是：在多久之后执行；在遵循事件循环机制下，尽快执行；这些都不能确保浏览器进入空闲状态，因此可能影响用户交互
-  ○ rAF 发生在 frame 的头部，在此之后还需要计算样式、布局、重绘、执行其它浏览器内部逻辑等，raf 回调时间越长对帧率影响越大
-  ○ 其它如 setImediate 等，都是差不多的逻辑，都基本会在一帧中执行，都无法确保浏览器已经进入空闲状态
-```
+○ setTimeout 的逻辑是：在多久之后执行；在遵循事件循环机制下，尽快执行；这些都不能确保浏览器进入空闲状态，因此可能影响用户交互
+○ rAF 发生在 frame 的头部，在此之后还需要计算样式、布局、重绘、执行其它浏览器内部逻辑等，raf 回调时间越长对帧率影响越大
+○ 其它如 setImediate 等，都是差不多的逻辑，都基本会在一帧中执行，都无法确保浏览器已经进入空闲状态
 
 ## scheduleWork
 
@@ -433,26 +364,20 @@ function workLoop(isYields) {
 next = beginWork(current, workInProgress, nextRenderExpirationTime);
 ```
 
-```js
 在 render 阶段:
 在 render 阶段, react 将更新应用于通过 setState 或 render 方法触发的组件, 并确定需要在用户屏幕上做哪些更新 -- 哪些节点需要插入, 更新或删除, 哪些组件需要调用其生命周期方法. 最终的这些更新信息被保存在一个叫 effect list 的 fiber 节点树上( 关于 fiber 的内容, 在这篇文章中简述 react 中的 fiber). 当然, 在首次渲染时, React 不需要产生任何更新信息，而是会给每个从 render 方法返回的 element 生成一个 fiber 节点，最终生成一个 fiber 节点树， 后续的更新也是复用了这棵 fiber 树。
-```
 
-````js
 在上图中， render 阶段被标记为纯的、没有副作用的，可能会被 React 暂停、终止或者重新执行。也就是说，React 会根据产生的任务的优先级，安排任务的调度（schedule）。利用类似 requestIdleCallback 的原理在浏览器空闲阶段进行更新计算，而不会阻塞动画，事件等的执行。
-```
 
 在 commit 阶段: react 内部会有三个 fiber 树
 
-```js
 current fiber tree: 在首次渲染时, react 不需要产生任何更新信息, 而是会给每个从 render 方法返回的 element 生成一个 fiber 节点,后续的更新也是复用了这颗 fiber 树.
 
-workInProgress fiber tree:  所有的更新计算工作都在 workInProgress tree 的 fiber 上执行. 当 react 遍历 current fiber tree 时, 它为每个 current fiber 创建一个替代 (alternate) 节点, 这样的 alternate 节点构成了 workInProgress tree.
+workInProgress fiber tree: 所有的更新计算工作都在 workInProgress tree 的 fiber 上执行. 当 react 遍历 current fiber tree 时, 它为每个 current fiber 创建一个替代 (alternate) 节点, 这样的 alternate 节点构成了 workInProgress tree.
 
 effect list fiber tree: workInProgress fiber tree 的子树.
 
 这个树的作用串联了标记具有更新的节点.
-```
 
 commit 阶段会遍历 effect list，把所有更新都 commit 到 DOM 树上。具体的，首先会有一个**pre-commit**阶段，主要是执行**getSnapshotBeforeUpdate**方法，可以获取当前 DOM 的快照（snap）。然后给需要卸载的组件执行**componentWillUnmount**方法。接着会把**current fiber tree**替换为**workInProgress fiber tree**。最后执行 DOM 的插入、更新和删除，给更新的组件执行 componentDidUpdate，给插入的组件执行 componentDidMount。
 
@@ -470,4 +395,7 @@ commit 阶段会遍历 effect list，把所有更新都 commit 到 DOM 树上。
 ## 挂载
 
 ## 卸载
-````
+
+```
+
+```

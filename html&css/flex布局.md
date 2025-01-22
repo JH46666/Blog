@@ -16,7 +16,7 @@ flex-wrap: wrap;
 flex-flow: row wrap;
 
 article {
-  flex: 1;
+flex: 1;
 }
 
 是一个无单位的比例值，表示每个 flex 项沿主轴的可用空间大小。本例中，我们设置 <article> 元素的 flex 值为 1，这表示每个元素占用空间都是相等的，占用的空间是在设置 padding 和 margin 之后剩余的空间。因为它是一个比例，这意味着将每个 flex 项的设置为 400000 的效果和 1 的时候是完全一样的。
@@ -30,10 +30,10 @@ flex 是一个可以指定最多三个不同值的缩写属性：
 
 flex-shrink 属性指定了 flex 元素的**收缩**规则。flex 元素仅在默认宽度之和大于容器的时候才会发生收缩，其收缩的大小是依据 flex-shrink 的值。
 
-flex-grow设置了一个flex项主尺寸的flex**增长**系数。它指定了flex容器中剩余空间的多少应该分配给项目（flex增长系数）。
+flex-grow 设置了一个 flex 项主尺寸的 flex**增长**系数。它指定了 flex 容器中剩余空间的多少应该分配给项目（flex 增长系数）。
 
-主尺寸是项的宽度或高度，这取决于flex-direction值。
+主尺寸是项的宽度或高度，这取决于 flex-direction 值。
 
-剩余的空间是flex容器的大小减去所有flex项的大小加起来的大小。
+剩余的空间是 flex 容器的大小减去所有 flex 项的大小加起来的大小。
 
-![flex-grow布局](https://tva1.sinaimg.cn/large/0081Kckwgy1gkk4oebj3fj30wh0u0jt7.jpg)
+![flex-grow布局](./0081Kckwgy1gkk4oebj3fj30wh0u0jt7.webp)

@@ -2,51 +2,29 @@
  * @param {number} n
  * @return {string[]}
  */
-var generateParenthesis = function(n) {
-    // // n:2
-    // ()()
-    // (())
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function (n) {
+  const result = [];
 
-
-    // //n:3
-    // ((()))  //3
-    // (())() //2
-    // ()(()) //2
-    // (()())  //2
-    // ()()  //1
-
-    // //n:4
-    // (((())))//4
-    // ()((()))//3
-    // ((()))()//3
-    // (()())()//2
-    // ()(()())//2
-    // ()(())()//2
-    // (())(())//2
-   let str = "";
-   let list = [];
-    if(n==1){
-      return ["()"]
+  function backtrack(left, right, current) {
+    if (left === 0 && right === 0) {
+      result.push(current);
+      return;
     }
 
-    generate(list,str,n,n);
-    return list;
+    if (left > 0) {
+      backtrack(left - 1, right, current + "(");
+    }
+    if (right > left) {
+      backtrack(left, right - 1, current + ")");
+    }
+  }
+  backtrack(n, n, "");
+  return result;
 };
 
-var generate = function(list, str, left, right){
-  // console.log('list, str, left, right: ', list, str, left, right);
-
-  if(left == 0 && right ==0){
-    list.push(str);
-    return;
-  }
-  if(left > 0){
-    generate(list,str+'(',left-1,right);
-  }
-  if(right>left){
-    generate(list,str+')',left,right-1);
-  }
-  return list
-}
-const val = generateParenthesis(4)
-console.log('val: ', val);
+const val = generateParenthesis(4);
+console.log("val: ", val);

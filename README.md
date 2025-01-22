@@ -9,4 +9,4 @@
 个人博客： https://shenjunhong.gitbook.io/blog/
 
 微信公众号：万有世界
-![微信](https://tva1.sinaimg.cn/large/008i3skNgy1gxn0cuzmbbj30u014ggrd.jpg)
+![微信](https://i0.wp.com/tva1.sinaimg.cn/large/008i3skNgy1gxn0cuzmbbj30u014ggrd.jpg)

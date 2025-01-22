@@ -6,6 +6,8 @@ React 用$$typeof 标识了一个 React element, 而每个这样的 element 对�
 
 ## 什么是 fiber
 
+Fiber 是 React 16 引入的一种新的协调算法（Reconciliation Algorithm）和架构。它的核心是一个虚拟栈帧，可以理解为一种轻量级的 JavaScript 对象，用于描述组件树的结构和状态。
+
 - 一个 fiber 就是一个对象结构，包含了一系列要完成的任务。
 - react 的每一个 element 都对应了一个 fiber（一棵 elements 树就对应了一棵 fiber 节点树）。
 - 一个 fiber 不会在每次 render 中重新创建，相反，它是一个可以被操作改变的数据结构，保留了组件的状态和 dom。所以操作在每个 fiber 上任务（更新，删除等）都可以映射到对应的 element。
@@ -127,9 +129,38 @@ ReactDom.render(jsx, document.getElementById("root"));
 2.挂起、、恢复、终止
 react 有两颗 Fiber 树，workInProgress tree 和 currentFiber tree。
 
-workInProgress 代表当前正在执行更新的 Fiber 树。在 render 或者 setState 后，会构建一颗 Fiber 树，也就是 workInProgress tree，这棵树在构建每一个节点的时候会收集当前节点的副作用，整棵树构建完成后，会形成一条完整的副作用链。
+workInProgress 代表当前正在执行更新的 Fiber 树。（在 render 或者 setState 后，会构建一颗 Fiber 树，也就是 workInProgress tree，这棵树在构建每一个节点的时候会收集当前节点的副作用，整棵树构建完成后，会形成一条完整的副作用链）
 
-currentFiber 表示上次渲染构建的 Filber 树。**在每一次更新完成后 workInProgress 会赋值给 currentFiber。**在新一轮更新时 workInProgress tree 再重新构建，新 workInProgress 的节点通过 alternate 属性和 currentFiber 的节点建立联系。
+currentFiber 表示上次渲染构建的 Fiber 树。**在每一次更新完成后 workInProgress 会赋值给 currentFiber。**在新一轮更新时 workInProgress tree 再重新构建，新 workInProgress 的节点通过 alternate 属性和 currentFiber 的节点建立联系。
 
-//TODO 自己画一遍这个流程图
 ![Fiber 请求调度](2022-05-06-19-28-03.png)
+
+## Fiber 架构的核心特性
+
+1. 增量渲染
+
+   Fiber 将渲染任务拆分为多个小任务，可以分批次执行，避免一次性占用主线程。
+
+2. 任务优先级：
+
+   Fiber 支持为不同的更新任务分配优先级（如用户交互、动画、数据更新等），确保高优先级任务优先执行。
+
+3. 并发模式（Concurrent Mode）：
+
+   Fiber 是 React 并发模式的基础，支持并发渲染和异步更新。
+
+4. 错误边界：
+
+   Fiber 引入了错误边界（Error Boundaries），可以捕获组件树中的错误，避免整个应用崩溃。
+
+## Fiber 渲染过程分为两个阶段
+
+1. Reconciliation 阶段（协调阶段）：
+
+   - 在这个阶段，React 会遍历 Fiber 树，找出需要更新的节点，并生成一个副作用列表（Effect List）。
+   - 这个阶段是可中断的，React 可以根据优先级暂停或恢复任务。
+
+2. Commit 阶段（提交阶段）：
+
+   - 在这个阶段，React 会一次性将所有的更新应用到 DOM 上。
+   - 这个阶段是不可中断的，确保 DOM 更新的原子性。

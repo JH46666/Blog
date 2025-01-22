@@ -389,21 +389,13 @@ beforeUpdate 函数实现在 DOM 渲染完成前执行。afterUpdate 函数则�
 14.特殊标签
 svelte option --- <https://www.sveltejs.cn/tutorial/svelte-options>
 
-- 实战 Demo
-  开发官网--<https://juejin.cn/post/6944355557495013412>
-  从零搭建服务端渲染----<https://www.jianshu.com/p/a6cfbe476503>
-
-  2.tailwindcss 的基础知识
-  3.accounts 代码 -- svelte 部分
-  -- ui 部分
-
 ## react 的路由部分和 lazy
 
-## organtion 的代码组织形式和 business 的代码组织
+## organization 的代码组织形式和 business 的代码组织
 
 区别：
 org 没有在 tsx 里面直接使用 actionSaga ，
-转而采用 useDisptch
+转而采用 useDispatch
 
 ## react - redux 的几个概念
 
@@ -415,11 +407,6 @@ org 没有在 tsx 里面直接使用 actionSaga ，
 4. <https://www.notion.so/automizely/Top-100-SaaS-Activation-Ideas-8be8c7133fed43a3ae3dca87b1fcd76c>
 
 ## 有时候太想当然了，很多事情 要么是超出我的认知 ，要么就是在当时场景下或是合理或是不合理，但已造成的事实
-
-##
-
-todo
-<https://formik.bootcss.com/>
 
 ## 关于 jira 的故事点---来自 Thoughtworks 洞见
 
@@ -454,35 +441,6 @@ todo
 www 项目
 
 对应的 react-bootstrap 对应的是：bootstrap 的 4.x 版本
-
-主线任务 触发支线任务
-
-O 涨薪 2700  
- K 提高自己 react 技术 看懂 sdk
-R
-R
-R
-R
-----------
-K 提高自己的 TS 技术
-R TS 的常见类型都能够看懂
-R
-----------
-O 创建独立站
-K
-R
-R
-R
-R
-
-自己找 ork 例如熟悉系统 那我就自己下单 用 as 查询
-
-O 比特币
-K 赚够 10W
-R
-R
-R
-标记重要非紧急
 
 ## 总结下：storyblock 的几个要点
 

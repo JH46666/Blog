@@ -14,9 +14,9 @@
 
 浏览器有两大 api： location 和 history
 
-location 有 href、reload、search、pathname、hash
+- location 有 href、reload、search、pathname、hash
 
-history 有 pushState replaceState go back forward 等功能
+- history 有 pushState replaceState go back forward 等功能
 
 ## hash
 
@@ -121,7 +121,7 @@ window.addEventListener("popstate", function (e) {
 - hash 前端路由，无刷新 #
 - history 会去请求接口 /
 
-1. hash 改变 hash 不会加载页面
+1. hash 改变 hash 不会加载页面。
 2. history 修改页面 url 时，浏览器不会向后端发送请求。
 
 hash 模式下，# 之前的内容包含在 http 请求中，对后端来说，即使没有对路由做到全面覆盖，也不会报 404;
@@ -267,7 +267,6 @@ const {
 
 ```js
 <li>
-  {" "}
   <Link to="/help"> Help </Link>
 </li>
 ```
@@ -400,8 +399,4 @@ class Router extends React.Component {
 }
 
 export default Router;
-
-
-
-
 ```

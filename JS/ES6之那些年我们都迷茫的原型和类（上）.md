@@ -181,7 +181,7 @@ console.log(bot1);
 
 构造函数实例出来的对象，可以得到构造函数对象中的属性，方法。等等还有一个什么 **proto**。我们仔细点进去，有两个东西 constructor: Bottle（）。这是因为我们是由 Bottle，new 出来。我们在继续点下去，还有\__proto_: 的 constructor： Object（）。
 
-![原型链](https://tva1.sinaimg.cn/large/007S8ZIlgy1gj7n4cxy2mj30c20eqjuq.jpg)
+![原型链](./007S8ZIlgy1gj7n4cxy2mj30c20eqjuq.webp)
 
 ```js
 
